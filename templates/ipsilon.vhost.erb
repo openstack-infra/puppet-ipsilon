@@ -1,0 +1,77 @@
+<VirtualHost *:80>
+  ServerName <%= scope.lookupvar("ipsilon::vhost_name") %>
+  ServerAdmin <%= scope.lookupvar("ipsilon::serveradmin") %>
+
+  ErrorLog ${APACHE_LOG_DIR}/<%= scope.lookupvar("ipsilon::vhost_name") %>-error.log
+
+  LogLevel warn
+
+  CustomLog ${APACHE_LOG_DIR}/<%= scope.lookupvar("ipsilon::vhost_name") %>-access.log combined
+
+  Redirect / https://<%= scope.lookupvar("ipsilon::vhost_name") %>/
+
+</VirtualHost>
+
+<VirtualHost *:443>
+  ServerName <%= scope.lookupvar("ipsilon::vhost_name") %>
+  ServerAdmin <%= scope.lookupvar("ipsilon::serveradmin") %>
+
+  ErrorLog ${APACHE_LOG_DIR}/<%= scope.lookupvar("ipsilon::vhost_name") %>-ssl-error.log
+
+  LogLevel warn
+
+  CustomLog ${APACHE_LOG_DIR}/<%= scope.lookupvar("ipsilon::vhost_name") %>-ssl-access.log combined
+
+
+  SSLEngine on
+  SSLProtocol All -SSLv2 -SSLv3
+
+  SSLCertificateFile      <%= scope.lookupvar("ipsilon::ssl_cert_file") %>
+  SSLCertificateKeyFile   <%= scope.lookupvar("ipsilon::ssl_key_file") %>
+  <% if scope.lookupvar("ipsilon::ssl_chain_file") != "" %>
+    SSLCertificateChainFile <%= scope.lookupvar("ipsilon::ssl_chain_file") %>
+  <% end %>
+
+  BrowserMatch "MSIE [2-6]" \
+      nokeepalive ssl-unclean-shutdown \
+      downgrade-1.0 force-response-1.0
+  # MSIE 7 and newer should be able to use keepalive
+  BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+  Alias <%= scope.lookupvar("ipsilon::ipsilon_uri") %>ui <%= scope.lookupvar("ipsilon::ipsilon_base_dir") %>/ui
+  Alias /.well-known <%= scope.lookupvar("ipsilon::ipsilon_home_dir") %>/public/well-known
+  Alias <%= scope.lookupvar("ipsilon::ipsilon_uri") %>cache <%= scope.lookupvar("ipsilon::ipsilon_cache_dir") %>
+  WSGIScriptAlias <%= scope.lookupvar("ipsilon::ipsilon_uri") %> /usr/local/bin/ipsilon
+  WSGIDaemonProcess <%= scope.lookupvar("ipsilon::ipsilon_instance") %> user=ipsilon group=ipsilon home=<%= scope.lookupvar("ipsilon::ipsilon_home_dir") %> display-name=ipsilon-<%= scope.lookupvar("ipsilon::ipsilon_instance") %>
+  
+  <Location <%= scope.lookupvar("ipsilon::ipsilon_uri") %>>
+      WSGIProcessGroup <%= scope.lookupvar("ipsilon::ipsilon_instance") %>
+  </Location>
+  
+  <Directory /usr/local/bin/>
+      Require all granted
+  </Directory>
+
+#  <Directory <%= scope.lookupvar("ipsilon::docroot") %>>
+#      Require all granted
+#  </Directory>
+  
+  <Directory <%= scope.lookupvar("ipsilon::ipsilon_base_dir") %>>
+      Require all granted
+  </Directory>
+  
+  <Directory <%= scope.lookupvar("ipsilon::ipsilon_home_dir") %>public/well-known>
+      Require all granted
+  </Directory>
+
+  <Location /.well-known/browserid>
+      ForceType application/json
+  </Location>
+  
+  <Directory <%= scope.lookupvar("ipsilon::ipsilon_cache_dir") %>>
+    SetHandler None
+    AllowOverride None
+    Satisfy Any
+    Allow from all
+  </Directory>
+</VirtualHost>

@@ -1,0 +1,25 @@
+[global]
+debug = True  #change
+tools.log_request_response.on = False
+template_dir = "templates"
+cache_dir = "<%= @ipsilon_cache_dir %>"
+cleanup_interval = 30
+db.conn.log = False
+db.echo = False
+
+<% if @ipsilon_base != "" %>
+base.mount = "<%= @ipsilon_base %>"
+<% end %>
+base.dir = "<%= @ipsilon_base_dir %>"
+admin.config.db = "mysql+pymysql://<%= @ipsilon_db_user %>:<%= @ipsilon_db_password %>@<%= @ipsilon_db_hostname %>/adminconfig"
+user.prefs.db = "mysql+pymysql://<%= @ipsilon_db_user %>:<%= @ipsilon_db_password %>@<%= @ipsilon_db_hostname %>/userprefs"
+transactions.db = "mysql+pymysql://<%= @ipsilon_db_user %>:<%= @ipsilon_db_password %>@<%= @ipsilon_db_hostname %>/transactions"
+
+tools.sessions.on = True
+tools.sessions.name = "idp_ipsilon_session_id"
+tools.sessions.storage_type = "file"
+tools.sessions.storage_path = "<%= @ipsilon_session_dir %>"
+tools.sessions.path = "<%= @ipsilon_uri %>"
+tools.sessions.timeout = 60
+tools.sessions.httponly = True
+tools.sessions.secure = True
