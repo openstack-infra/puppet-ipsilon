@@ -1,0 +1,8 @@
+Code-Review+2: Jeremy Stanley <fungi@yuggoth.org>
+Workflow+1: Jeremy Stanley <fungi@yuggoth.org>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Thu, 11 Aug 2016 16:20:51 +0000
+Reviewed-on: https://review.openstack.org/344366
+Project: openstack-infra/puppet-ipsilon
+Branch: refs/heads/master
