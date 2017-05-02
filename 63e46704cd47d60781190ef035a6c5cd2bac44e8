@@ -1,0 +1,9 @@
+Code-Review+2: Colleen Murphy <colleen@gazlene.net>
+Code-Review+2: yolanda.robla <yroblamo@redhat.com>
+Workflow+1: yolanda.robla <yroblamo@redhat.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Tue, 02 May 2017 14:25:46 +0000
+Reviewed-on: https://review.openstack.org/461572
+Project: openstack-infra/puppet-ipsilon
+Branch: refs/heads/master
